@@ -25,7 +25,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm install
-    - run: npm run make
+    - run: npm run package
     - name: 'upload artifact'
       uses: actions/upload-artifact@v3.1.1
       with:
