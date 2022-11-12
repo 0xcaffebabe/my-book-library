@@ -29,4 +29,4 @@ jobs:
     - name: 'upload artifact'
       uses: actions/upload-artifact@v3.1.1
       with:
-        path: ./release
+        path: ./release/build/*.exe
