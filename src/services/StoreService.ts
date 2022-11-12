@@ -27,6 +27,18 @@ export default class StoreService {
     fs.promises.writeFile(path, data)
   }
 
+  public async saveFile(filename: string, data: string) {
+    const path = `${this.getDataStoreUrl()}/${filename}`
+    PathUtils.ensureDirectoryExistence(path)
+    fs.promises.writeFile(path, data)
+  }
+
+  public async getFile(filename: string) {
+    const path = `${this.getDataStoreUrl()}/${filename}`
+    PathUtils.ensureDirectoryExistence(path);
+    return (await fs.promises.readFile(path)).toString()
+  }
+
   public async getData(type: DataType, defaultVal: string) :Promise<any> {
     const path = `${this.getDataStoreUrl()}/${type}`
     if (!fs.existsSync(path)) {

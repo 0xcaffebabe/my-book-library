@@ -25,7 +25,6 @@ export default class IndexService {
   public async index() {
     const storeLoc = this.configService.getBaseStoreUrl()
     const bookList = (await fs.promises.readdir(storeLoc))
-      .map(v => storeLoc + '/' + v)
       .map(v => {
         const arr = v.split("/")
         const filename = arr[arr.length - 1]
