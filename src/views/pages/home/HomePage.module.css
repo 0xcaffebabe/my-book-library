@@ -1,0 +1,9 @@
+
+.bookItem {
+  color: #000;
+  height: 200px;
+  width: 148px;
+  border: 1px solid #ccc;
+  text-align: center;
+  margin: 4px 4px;
+}

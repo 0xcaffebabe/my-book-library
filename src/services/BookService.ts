@@ -1,16 +1,14 @@
 
 import Book from '../dto/Book'
 import fs from 'fs'
+import StoreService from './StoreService'
+import { DataType } from 'enums/DataType'
 
 export default class BookService {
 
+  private storeService = StoreService.newInstance()
+
   public async getBookList(): Promise<Book[]> {
-    const urlList = await fs.promises.readdir('C:/Users/chenj/iCloudDrive/ebook')
-    return urlList.map(v =>{
-      return <Book>
-      {
-      name: v,
-      phyLoc: v
-    }})
+    return this.storeService.getData(DataType.BOOK_LIST, '[]')
   }
 }
