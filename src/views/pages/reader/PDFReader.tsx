@@ -29,7 +29,7 @@ export default class PDFReader extends React.Component<{file: string},{}> {
   }
 
   render() {
-    return  <div style={{height: '100%'}}>
+    return  <div style={{height: 'calc(100% - 24px)', overflowY: 'hidden'}}>
       <Button onClick={() => this.click()} type="primary">护眼模式</Button>
       <Button onClick={() => this.save()} type="primary">保存记录</Button>
       <iframe src="/pdf/web/viewer.html" style={{height: '100%', width: '100%'}}></iframe>

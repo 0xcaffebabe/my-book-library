@@ -27,9 +27,26 @@ See https://github.com/adobe-type-tools/cmap-resources
     <meta name="google" content="notranslate">
     <title>PDF.js viewer</title>
     <style>
-      .pdfViewer .page {
-        background-color: yellow;
-      }
+      ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+html ::-webkit-scrollbar-thumb {
+  box-shadow: inset 0 0 10px var(--second-dark-text-color);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  background: rgba(255,255,255,.12);
+  box-shadow: inset 0 0 10px #0003;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 3px;
+  background: rgba(0,0,0,.06);
+  box-shadow: inset 0 0 5px #00000014;
+}
     </style>
 
     <link rel="stylesheet" href="viewer.css">
