@@ -71,9 +71,11 @@ export default class HomePage extends React.Component<{}, {bookList: Book[], kw:
             <Col span={8}>
               <Input placeholder='搜索' value={this.state.kw} onChange={(e) => this.handleKwChange(e)}></Input>
             </Col>
-            <Col span={4} offset={8}>
-              <Button type="primary" onClick={() => this.restore()}>还原pdf历史记录</Button>
+            <Col span={4}>
               <Button onClick={() => this.setState({settingVisible: true})}> 存储目录设置</Button>
+            </Col>
+            <Col span={4} offset={4}>
+              <Button type="primary" onClick={() => this.restore()}>还原pdf历史记录</Button>
             </Col>
           </Row>
           <BaseUrlSetting open={this.state.settingVisible}/>
