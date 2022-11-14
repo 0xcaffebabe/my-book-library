@@ -1,10 +1,13 @@
 
-import Epub from 'epubjs'
+import Epub, { NavItem } from 'epubjs'
 
 import React from "react";
 import fs from 'fs'
 import {Blob} from 'buffer'
-import {Button} from 'antd'
+import {Button, Layout} from 'antd'
+import CategoryDTO from 'dto/Category';
+import EPUBReaderCategoryList from './EPUBReaderCategoryList';
+const { Header, Footer, Sider, Content } = Layout;
 
 const themeList = [
   {
@@ -41,8 +44,24 @@ const themeList = [
   }
 ]
 
-export default class EPUBReader extends React.Component<{file: string},{}> {
+function nav2Cate(nav: NavItem[]): CategoryDTO[] {
+  if (!nav || nav.length == 0) {
+    return []
+  }
+  return nav.map(v => {return {
+    label: v.label,
+    href: v.href,
+    children: nav2Cate(v.subitems || [])
+  }})
+}
+
+export default class EPUBReader extends React.Component<{file: string},{cateList: CategoryDTO[]}> {
   private book: ePub.Book | null = null
+
+  constructor(props: any) {
+    super(props)
+    this.state = {cateList: []}
+  }
 
   async componentDidMount(): Promise<void> {
     this.book = Epub(this.props.file)
@@ -52,6 +71,8 @@ export default class EPUBReader extends React.Component<{file: string},{}> {
     }else {
       await this.book.renderTo('epubBook').display()
     }
+    this.setState({cateList: nav2Cate(this.book.navigation.toc)})
+    console.log(this.state)
     this.registerTheme()
   }
 
@@ -93,12 +114,25 @@ export default class EPUBReader extends React.Component<{file: string},{}> {
     this.book?.rendition.themes.select(name)
   }
 
+  onNav(href: string) {
+    console.log(this.book?.rendition.display(href))
+    console.log(href)
+  }
+
   render() {
-    return <div>
-        <Button type="primary" onClick={() => this.prev()}>prev</Button>
-        <Button type="primary" onClick={() => this.next()}>next</Button>
-        <Button type="primary" onClick={() => this.setTheme('eye')}>护眼</Button>
-        <div id="epubBook" style={{height: '100%', width: '100%'}}></div>
-      </div>
+    console.log(this.state)
+    return <Layout style={{height: '100%'}}>
+            <Header><Button type="primary" onClick={() => this.prev()}>prev</Button>
+                <Button type="primary" onClick={() => this.next()}>next</Button>
+                <Button type="primary" onClick={() => this.setTheme('eye')}>护眼</Button></Header>
+            <Layout>
+              <Sider>
+                <div style={{height: '100%', overflow: 'scroll'}}>
+                  <EPUBReaderCategoryList categoryList={this.state.cateList} onNav={this.onNav.bind(this)}></EPUBReaderCategoryList>
+                </div>
+              </Sider>
+              <Content><div id="epubBook" style={{height: '100%', width: '100%'}}></div></Content>
+            </Layout>
+          </Layout>
   }
 }
