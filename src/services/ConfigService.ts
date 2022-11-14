@@ -32,6 +32,10 @@ export default class ConfigService {
     throw new Error("无法获取基本存储目录")
   }
 
+  public saveBaseStoreUrl(url: string){
+    localStorage.setItem("config::url", url)
+  }
+
   private getLocalStorage(): Storage | undefined {
     if (typeof localStorage !== 'undefined') {
       return localStorage

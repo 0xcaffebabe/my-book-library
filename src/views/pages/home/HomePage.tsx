@@ -8,8 +8,9 @@ import IndexService from 'services/IndexService';
 import { Link } from 'react-router-dom';
 import ConfigService from 'services/ConfigService';
 import StoreService from 'services/StoreService';
+import BaseUrlSetting from './BaseUrlSetting';
 
-export default class HomePage extends React.Component<{}, {bookList: Book[], kw: string}> {
+export default class HomePage extends React.Component<{}, {bookList: Book[], kw: string, settingVisible: boolean}> {
   private bookService = new BookService()
   private indexService = IndexService.newInstance()
   private configService = ConfigService.newInstance()
@@ -21,7 +22,8 @@ export default class HomePage extends React.Component<{}, {bookList: Book[], kw:
     super(props)
     this.state = {
       bookList: [],
-      kw: ''
+      kw: '',
+      settingVisible: false
     }
   }
 
@@ -46,6 +48,9 @@ export default class HomePage extends React.Component<{}, {bookList: Book[], kw:
     localStorage.setItem('pdfjs.history', data)
   }
 
+  async setBaseUrl(url: string) {
+  }
+
   handleKwChange(event: React.ChangeEvent<HTMLInputElement>) {
     const kw = event.target.value
     this.setState({kw})
@@ -68,8 +73,10 @@ export default class HomePage extends React.Component<{}, {bookList: Book[], kw:
             </Col>
             <Col span={4} offset={8}>
               <Button type="primary" onClick={() => this.restore()}>还原pdf历史记录</Button>
+              <Button onClick={() => this.setState({settingVisible: true})}> 存储目录设置</Button>
             </Col>
           </Row>
+          <BaseUrlSetting open={this.state.settingVisible}/>
       </Header>
       <Content className={styles.bookList}>
         <Row>
