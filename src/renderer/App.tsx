@@ -6,9 +6,9 @@ import TitleBar from '../views/components/TitleBar'
 
 export default function App() {
   return (
-    <div>
+    <div style={{height: '100%'}}>
     <TitleBar />
-    <div style={{paddingTop: '34px'}}>
+    <div style={{paddingTop: '34px', height: '100%'}}>
       <Router>
         <Routes>
           <Route path="/" element={<HomePage />}/>

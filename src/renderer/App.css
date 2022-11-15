@@ -10,7 +10,7 @@ body {
   height: 100vh;
   background: #f0f2f5;
   font-family: sans-serif;
-  overflow-y: scroll;
+  overflow-y: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
