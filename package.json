@@ -212,7 +212,8 @@
       "output": "release/build"
     },
     "extraResources": [
-      "./assets/**"
+      "./assets/**",
+      "./native/**"
     ],
     "publish": {
       "provider": "github",

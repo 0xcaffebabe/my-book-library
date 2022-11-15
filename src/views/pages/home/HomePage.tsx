@@ -2,8 +2,8 @@ import React from 'react';
 import { Col, Row, Button, Layout, message, Input   } from 'antd';
 const { Header, Footer, Sider, Content } = Layout;
 import styles from './HomePage.module.css'
-import BookService from '../../../services/BookService'
-import Book from '../../../dto/Book';
+import BookService from 'services/BookService'
+import Book from 'dto/Book';
 import IndexService from 'services/IndexService';
 import { Link } from 'react-router-dom';
 import ConfigService from 'services/ConfigService';
@@ -11,7 +11,7 @@ import StoreService from 'services/StoreService';
 import BaseUrlSetting from './BaseUrlSetting';
 
 export default class HomePage extends React.Component<{}, {bookList: Book[], kw: string, settingVisible: boolean}> {
-  private bookService = new BookService()
+  private bookService = BookService.newInstance()
   private indexService = IndexService.newInstance()
   private configService = ConfigService.newInstance()
 

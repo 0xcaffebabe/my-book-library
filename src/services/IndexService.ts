@@ -3,12 +3,14 @@ import fs from 'fs'
 import Book from "../dto/Book";
 import StoreService from "./StoreService";
 import { DataType } from "enums/DataType";
+import BookService from "./BookService";
 
 export default class IndexService {
 
   private static instance: IndexService;
   private configService = ConfigService.newInstance()
   private storeService = StoreService.newInstance()
+  private bookService = BookService.newInstance()
 
   private constructor(){}
 
@@ -36,6 +38,13 @@ export default class IndexService {
         }
       })
     await this.storeService.saveData(DataType.BOOK_LIST, JSON.stringify(bookList))
+    console.log('书籍缩略图生成')
+    for(const book of bookList) {
+      if (book.name.endsWith(".pdf") || book.name.endsWith(".PDF")) {
+        console.log("生成 " + book.name)
+        await this.bookService.generatePDFThumbnail(storeLoc + "/" + book.name)
+      }
+    }
   }
 
   public async getBookIndex(): Promise<Book[]> {

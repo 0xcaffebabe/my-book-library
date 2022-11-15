@@ -10,6 +10,11 @@ const ensureDirectoryExistence = (filePath: string):void => {
   fs.mkdirSync(dirname);
 }
 
+const normalize = (path: string) => {
+  return path.replaceAll("\\", "/")
+}
+
 export default {
-  ensureDirectoryExistence
+  ensureDirectoryExistence,
+  normalize
 }
