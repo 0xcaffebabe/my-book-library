@@ -1,0 +1,14 @@
+.titleBar {
+  position: fixed;
+  background-color: #fff;
+  width: 100%;
+  z-index: 999;
+  padding: 4px;
+  color: #ccc;
+  box-shadow: 2px 2px 3px #ccc;
+  -webkit-app-region: drag;
+}
+.optBtn {
+  float: right;
+  -webkit-app-region: no-drag;
+}
