@@ -2,21 +2,15 @@ import React from 'react';
 import { Col, Row, Button, Layout, message, Input   } from 'antd';
 const { Header, Footer, Sider, Content } = Layout;
 import styles from './HomePage.module.css'
-import BookService from 'services/BookService'
 import BookDTO from '@/dto/BookDTO';
 import IndexService from 'services/IndexService';
-import { Link } from 'react-router-dom';
-import ConfigService from 'services/ConfigService';
 import StoreService from 'services/StoreService';
 import BaseUrlSetting from './BaseUrlSetting';
 import Book from './components/Book'
 
 export default class HomePage extends React.Component<{}, {bookList: BookDTO[], kw: string, settingVisible: boolean}> {
-  private bookService = BookService.newInstance()
   private indexService = IndexService.newInstance()
-  private configService = ConfigService.newInstance()
 
-  private storeUrl = this.configService.getBaseStoreUrl()
   private originBookList: BookDTO[] = []
 
   constructor(props: {}) {

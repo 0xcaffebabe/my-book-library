@@ -8,6 +8,7 @@ import path from 'path'
 
 import util from 'util';
 import PathUtils from 'utils/PathUtils'
+import StreamZip from 'node-stream-zip'
 
 
 const exec = util.promisify(require('child_process').exec);
@@ -34,7 +35,7 @@ export default class BookService {
     bookName = PathUtils.normalize(bookName)
     const arr = bookName.split("/")
     const pdfFilename = arr[arr.length - 1]
-    const thumbnailFilename = pdfFilename.replace('.pdf', '.jpg')
+    const thumbnailFilename = pdfFilename.replace('.pdf', '.jpg').replace(".epub", ".jpg")
     return `${this.configService.getBaseStoreUrl().replaceAll("\\", "/")}/data/thumbnails/${thumbnailFilename}`
   }
 
@@ -42,7 +43,7 @@ export default class BookService {
     return this.configService.getBaseStoreUrl() + '/' + bookName;
   }
 
-  public async generatePDFThumbnail(file: string) {
+  public async generateThumbnail(file: string) {
     file = PathUtils.normalize(file)
 
     const thumbnailPath = this.generateBookThumbnailUrl(file)
@@ -52,6 +53,26 @@ export default class BookService {
       console.log(thumbnailPath + "已存在 不重新生成")
       return;
     }
+
+    if (file.toUpperCase().endsWith("PDF")) {
+      return await this.generatePDFThumbnail(file, thumbnailPath)
+    }
+
+    if (file.toUpperCase().endsWith("EPUB")) {
+      return await this.generateEPUBThumbnail(file, thumbnailPath)
+    }
+
+    console.error("未知的书籍类型", file)
+  }
+
+  /**
+   *
+   * 获取PDF缩略图
+   * @param {string} file
+   * @return {*}
+   * @memberof BookService
+   */
+  private async generatePDFThumbnail(file: string, thumbnailPath: string) {
 
     let appPath = PathUtils.normalize(process.cwd())
 
@@ -64,5 +85,25 @@ export default class BookService {
     const {stdout, sterr} = await exec(cmd)
     console.log(stdout)
     console.log(sterr)
+  }
+
+
+
+  /**
+   *
+   * 获取EPUB缩略图
+   * @param {string} file
+   * @memberof BookService
+   */
+  private async generateEPUBThumbnail(file: string, thumbnailPath: string) {
+    const zip = new StreamZip.async({ file });
+    const data = await zip.entryData('OEBPS/content.opf')
+    const doc = (new DOMParser).parseFromString(data.toString(), 'application/xml');
+    // 缩略图名称
+    const coverContent = doc.querySelector('metadata [name=cover]')?.getAttribute("content")
+    const coverHref = doc.querySelector(`manifest [id=${coverContent}]`)?.getAttribute("href")
+
+    const coverData = await zip.entryData("OEBPS/" + coverHref)
+    fs.promises.writeFile(thumbnailPath, coverData)
   }
 }

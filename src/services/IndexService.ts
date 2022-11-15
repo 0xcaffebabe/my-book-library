@@ -42,7 +42,7 @@ export default class IndexService {
     for(const book of bookList) {
       if (book.name.endsWith(".pdf") || book.name.endsWith(".PDF")) {
         console.log("生成 " + book.name)
-        await this.bookService.generatePDFThumbnail(storeLoc + "/" + book.name)
+        await this.bookService.generateThumbnail(storeLoc + "/" + book.name)
       }
     }
   }
