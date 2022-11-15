@@ -1,5 +1,5 @@
 
-export default interface Book {
+export default interface BookDTO {
 
 
   /**

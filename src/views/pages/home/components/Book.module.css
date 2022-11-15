@@ -1,0 +1,12 @@
+.bookItem {
+  color: #000;
+  height: 320px;
+  width: 200px;
+  border: 1px solid #ccc;
+  text-align: center;
+  margin: 40px;
+}
+
+.bookItem:hover {
+  cursor: pointer;
+}

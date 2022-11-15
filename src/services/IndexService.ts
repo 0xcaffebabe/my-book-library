@@ -1,6 +1,6 @@
 import ConfigService from "./ConfigService";
 import fs from 'fs'
-import Book from "../dto/Book";
+import BookDTO from "../dto/BookDTO";
 import StoreService from "./StoreService";
 import { DataType } from "enums/DataType";
 import BookService from "./BookService";
@@ -30,7 +30,7 @@ export default class IndexService {
       .map(v => {
         const arr = v.split("/")
         const filename = arr[arr.length - 1]
-        return <Book>{
+        return <BookDTO>{
           id: filename,
           name: filename,
           thumbnail: '',
@@ -47,7 +47,7 @@ export default class IndexService {
     }
   }
 
-  public async getBookIndex(): Promise<Book[]> {
+  public async getBookIndex(): Promise<BookDTO[]> {
     return this.storeService.getData(DataType.BOOK_LIST, '[]')
   }
 }

@@ -1,5 +1,5 @@
 
-import Book from '@/dto/Book'
+import BookDTO from '@/dto/BookDTO'
 import fs from 'fs'
 import StoreService from 'services/StoreService'
 import { DataType } from 'enums/DataType'
@@ -26,16 +26,26 @@ export default class BookService {
 
   private configService = ConfigService.newInstance()
 
-  public async getBookList(): Promise<Book[]> {
+  public async getBookList(): Promise<BookDTO[]> {
     return this.storeService.getData(DataType.BOOK_LIST, '[]')
+  }
+
+  public generateBookThumbnailUrl(bookName: string) {
+    bookName = PathUtils.normalize(bookName)
+    const arr = bookName.split("/")
+    const pdfFilename = arr[arr.length - 1]
+    const thumbnailFilename = pdfFilename.replace('.pdf', '.jpg')
+    return `${this.configService.getBaseStoreUrl().replaceAll("\\", "/")}/data/thumbnails/${thumbnailFilename}`
+  }
+
+  public generateBookStoreUrl(bookName: string) {
+    return this.configService.getBaseStoreUrl() + '/' + bookName;
   }
 
   public async generatePDFThumbnail(file: string) {
     file = PathUtils.normalize(file)
-    const arr = file.split("/")
-    const pdfFilename = arr[arr.length - 1]
-    const thumbnailFilename = pdfFilename.replace('.pdf', '.jpg')
-    const thumbnailPath = `${this.configService.getBaseStoreUrl().replaceAll("\\", "/")}/data/thumbnails/${thumbnailFilename}`
+
+    const thumbnailPath = this.generateBookThumbnailUrl(file)
     PathUtils.ensureDirectoryExistence(thumbnailPath)
 
     if (fs.existsSync(thumbnailPath)) {
