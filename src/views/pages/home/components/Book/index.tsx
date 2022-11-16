@@ -14,7 +14,7 @@ export default function Book(props: {book: BookDTO}) {
     width={200}
     height={320}
     preview={false}
-    src={bookService.generateBookThumbnailUrl(book.name)}
+    src={'file:///' + bookService.generateBookThumbnailUrl(book.name)}
     fallback={fallback}
   />
     <Link to={"/reader?file=" + bookService.generateBookStoreUrl(book.name)}>{book.name}</Link>
