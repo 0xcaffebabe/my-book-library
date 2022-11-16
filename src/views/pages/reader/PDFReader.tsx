@@ -10,11 +10,11 @@ export default class PDFReader extends React.Component<{file: string},{}> {
   }
 
   async componentDidMount() {
-    const file = await fs.promises.readFile(this.props.file)
-    window.bookFile = file
-    document.getElementsByTagName('iframe')[0].contentWindow!.document.styleSheets[0].insertRule(`
-    .textLayer {background-color: yellowgreen}
-    `)
+    window.bookFile = `file:///${this.props.file}`
+    // 注入css样式
+    window.cssRule = `
+      .textLayer {background-color: yellowgreen}
+    `
   }
 
   click() {

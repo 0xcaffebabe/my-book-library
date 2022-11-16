@@ -1,1 +1,3 @@
-declare var bookFile: Buffer
+declare var bookFile: string
+declare var cssRule: string
+
