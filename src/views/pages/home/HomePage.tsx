@@ -1,6 +1,6 @@
 import React from 'react';
 import { Col, Row, Button, Layout, message, Input   } from 'antd';
-const { Header, Footer, Sider, Content } = Layout;
+const { Header, Content } = Layout;
 import styles from './HomePage.module.css'
 import BookDTO from '@/dto/BookDTO';
 import IndexService from 'services/IndexService';

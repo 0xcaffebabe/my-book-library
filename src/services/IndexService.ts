@@ -27,6 +27,7 @@ export default class IndexService {
   public async index(callback?: (currentBook: string, currentIndex: number, total: number) => void) {
     const storeLoc = this.configService.getBaseStoreUrl()
     const bookList = (await fs.promises.readdir(storeLoc))
+      .filter(v => v.toUpperCase().indexOf("PDF") != -1 || v.toUpperCase().indexOf("EPUB") != -1)
       .map(v => {
         const arr = v.split("/")
         const filename = arr[arr.length - 1]
