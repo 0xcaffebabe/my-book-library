@@ -24,7 +24,7 @@ export default class IndexService {
    * 生成书籍索引
    * @memberof IndexService
    */
-  public async index() {
+  public async index(callback?: (currentBook: string, currentIndex: number, total: number) => void) {
     const storeLoc = this.configService.getBaseStoreUrl()
     const bookList = (await fs.promises.readdir(storeLoc))
       .map(v => {
@@ -39,11 +39,13 @@ export default class IndexService {
       })
     await this.storeService.saveData(DataType.BOOK_LIST, JSON.stringify(bookList))
     console.log('书籍缩略图生成')
+    let cnt = 0
     for(const book of bookList) {
-      if (book.name.endsWith(".pdf") || book.name.endsWith(".PDF")) {
-        console.log("生成 " + book.name)
-        await this.bookService.generateThumbnail(storeLoc + "/" + book.name)
+      console.log("生成 " + book.name)
+      if (callback) {
+        callback(book.name, ++cnt, bookList.length)
       }
+      await this.bookService.generateThumbnail(storeLoc + "/" + book.name)
     }
   }
 

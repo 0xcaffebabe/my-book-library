@@ -97,13 +97,26 @@ export default class BookService {
    */
   private async generateEPUBThumbnail(file: string, thumbnailPath: string) {
     const zip = new StreamZip.async({ file });
-    const data = await zip.entryData('OEBPS/content.opf')
+
+    const container = await zip.entryData("META-INF/container.xml")
+    const containerDoc = (new DOMParser).parseFromString(container.toString(), 'application/xml');
+    const fullPath = containerDoc.querySelector("rootfile")?.getAttribute("full-path")
+    if (!fullPath) {
+      throw new Error(`无法获取到fullPath ${containerDoc}`)
+    }
+
+    const data = await zip.entryData(fullPath)
     const doc = (new DOMParser).parseFromString(data.toString(), 'application/xml');
+    console.log(doc)
     // 缩略图名称
     const coverContent = doc.querySelector('metadata [name=cover]')?.getAttribute("content")
-    const coverHref = doc.querySelector(`manifest [id=${coverContent}]`)?.getAttribute("href")
+    const coverHref = doc.querySelector(`manifest [id='${coverContent}']`)?.getAttribute("href")
 
-    const coverData = await zip.entryData("OEBPS/" + coverHref)
+    let prefix = ""
+    if (fullPath.indexOf("OEBPS") != -1) {
+      prefix = "OEBPS/"
+    }
+    const coverData = await zip.entryData(prefix + coverHref)
     fs.promises.writeFile(thumbnailPath, coverData)
   }
 }

@@ -7,14 +7,18 @@ import IndexService from 'services/IndexService';
 import StoreService from 'services/StoreService';
 import BaseUrlSetting from './BaseUrlSetting';
 import Book from './components/Book'
+import IndexGenerator from './components/IndexGenerator';
 
 export default class HomePage extends React.Component<{}, {bookList: BookDTO[], kw: string, settingVisible: boolean}> {
   private indexService = IndexService.newInstance()
 
   private originBookList: BookDTO[] = []
 
+  private indexGenerator: React.RefObject<IndexGenerator>;
+
   constructor(props: {}) {
     super(props)
+    this.indexGenerator = React.createRef<IndexGenerator>()
     this.state = {
       bookList: [],
       kw: '',
@@ -30,12 +34,7 @@ export default class HomePage extends React.Component<{}, {bookList: BookDTO[], 
   }
 
   async handleReindex() {
-    try {
-      await this.indexService.index()
-      message.info("重建索引完成")
-    } catch(e) {
-      // message.error(e)
-    }
+    this.indexGenerator.current?.display()
   }
 
   async restore() {
@@ -83,6 +82,7 @@ export default class HomePage extends React.Component<{}, {bookList: BookDTO[], 
           </Col>)}
         </Row>
       </Content>
+      <IndexGenerator ref={this.indexGenerator}/>
     </Layout>;
   }
 }
