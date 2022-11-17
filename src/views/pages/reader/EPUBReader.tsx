@@ -2,12 +2,11 @@
 import Epub, { NavItem } from 'epubjs'
 
 import React from "react";
-import fs from 'fs'
-import {Blob} from 'buffer'
-import {Button, Layout} from 'antd'
+import { Layout, Drawer} from 'antd'
 import CategoryDTO from 'dto/Category';
 import EPUBReaderCategoryList from './EPUBReaderCategoryList';
-const { Header, Footer, Sider, Content } = Layout;
+import Reader from './Reader';
+const { Content } = Layout;
 
 const themeList = [
   {
@@ -55,34 +54,75 @@ function nav2Cate(nav: NavItem[]): CategoryDTO[] {
   }})
 }
 
-export default class EPUBReader extends React.Component<{file: string},{cateList: CategoryDTO[]}> {
+export default class EPUBReader extends React.Component<{file: string},{cateList: CategoryDTO[], showCategory: boolean}>  implements Reader{
   private book: ePub.Book | null = null
 
   constructor(props: any) {
     super(props)
-    this.state = {cateList: []}
+    this.state = {cateList: [], showCategory: false}
+  }
+  public eyesMode() {
+    this.setTheme('eye')
+  }
+  public zenMode() {
+    // TODO
+  }
+  public openCategory () {
+    this.setState({
+      showCategory: true
+    })
+  }
+
+  private onKeydown = (e: KeyboardEvent) => {
+    if (e.key == 'ArrowRight' || e.code == 'PageDown') {
+      this.next()
+    }
+    if (e.key == 'ArrowLeft' || e.code == 'PageUp') {
+      this.prev()
+    }
+    console.log(this, e)
+  }
+
+  private onWheel = (e: WheelEvent) => {
+    console.log(e)
+    if (e.deltaY > 0) {
+      this.next()
+    }
+    if (e.deltaY < 0) {
+      this.prev()
+    }
   }
 
   async componentDidMount(): Promise<void> {
     this.book = Epub(this.props.file)
     const point = this.getPoint()
     if (point) {
-      await this.book.renderTo('epubBook').display(point)
+      await this.book.renderTo('epubBook', {
+        width: window.innerWidth,
+				height: window.innerHeight- 100,
+      }).display(point)
     }else {
       await this.book.renderTo('epubBook').display()
     }
     this.setState({cateList: nav2Cate(this.book.navigation.toc)})
-    console.log(this.state)
     this.registerTheme()
+    document.addEventListener('keydown', this.onKeydown)
+    document.addEventListener('wheel', this.onWheel)
+    this.book.rendition.on('keydown', this.onKeydown)
   }
 
-  next() {
-    this.book?.rendition.next()
+  componentWillUnmount(): void {
+    document.removeEventListener('keydown', this.onKeydown)
+    document.removeEventListener('wheel', this.onWheel)
+  }
+
+  async next() {
+    await this.book?.rendition.next()
     this.savePoint()
   }
 
-  prev() {
-    this.book?.rendition.prev()
+  async prev() {
+    await this.book?.rendition.prev()
     this.savePoint()
   }
 
@@ -91,7 +131,7 @@ export default class EPUBReader extends React.Component<{file: string},{cateList
     let map = JSON.parse(data)
     const arr = this.props.file.split("/")
     const filename = arr[arr.length - 1]
-    map[filename] = this.book?.rendition.currentLocation().start.cfi
+    map[filename] = (this.book?.rendition.currentLocation() as any).end.cfi
     localStorage.setItem('epub.history', JSON.stringify(map))
   }
 
@@ -114,24 +154,20 @@ export default class EPUBReader extends React.Component<{file: string},{cateList
     this.book?.rendition.themes.select(name)
   }
 
-  onNav(href: string) {
-    console.log(this.book?.rendition.display(href))
+  async onNav(href: string) {
+    console.log(await this.book?.rendition.display(href))
     console.log(href)
   }
 
   render() {
-    console.log(this.state)
-    return <Layout style={{height: '100%'}}>
-            <Header><Button type="primary" onClick={() => this.prev()}>prev</Button>
-                <Button type="primary" onClick={() => this.next()}>next</Button>
-                <Button type="primary" onClick={() => this.setTheme('eye')}>护眼</Button></Header>
+    return <Layout style={{height: '100%'}} id="epubMain">
             <Layout>
-              <Sider>
-                <div style={{height: '100%', overflow: 'scroll'}}>
-                  <EPUBReaderCategoryList categoryList={this.state.cateList} onNav={this.onNav.bind(this)}></EPUBReaderCategoryList>
-                </div>
-              </Sider>
-              <Content><div id="epubBook" style={{height: '100%', width: '100%'}}></div></Content>
+              <div>
+              <Drawer  title="Basic Drawer" placement="left" onClose={() => this.setState({showCategory: false})} open={this.state.showCategory}>
+                <EPUBReaderCategoryList categoryList={this.state.cateList} onNav={this.onNav.bind(this)}></EPUBReaderCategoryList>
+              </Drawer>
+              </div>
+              <Content><div id="epubBook"></div></Content>
             </Layout>
           </Layout>
   }

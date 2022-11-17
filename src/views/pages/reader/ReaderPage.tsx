@@ -1,12 +1,10 @@
-import React, {useState} from "react";
+import React, {useRef, useState} from "react";
 import { useSearchParams } from "react-router-dom";
 
-
-import { Link } from "react-router-dom";
 import PDFReader from "./PDFReader";
 import EPUBReader from './EPUBReader'
-import { Button } from "antd";
 import Screenshot from "./component/Screenshot";
+import ReaderHeader from "./component/ReaderHeader";
 const {ipcRenderer} = require('electron')
 
 export default function ReaderPage() {
@@ -18,25 +16,34 @@ export default function ReaderPage() {
     setShowScreenshot(true)
   });
 
+
   const [searchParams, setSearchParams] = useSearchParams();
-  let reader: React.ReactNode = <div>unknow</div>
-  const filename = searchParams.get("file")
-  if (filename?.endsWith('pdf')) {
-    reader = <PDFReader file={searchParams.get("file")!}/>
+  const filename = searchParams.get("file") || ''
+  const pdfRef = React.createRef<PDFReader>()
+  const epubRef = React.createRef<EPUBReader>()
+  const readerTemplate = () => {
+    if (filename?.endsWith('pdf')) {
+      return <PDFReader file={filename} ref={pdfRef}/>
+    }
+    return <EPUBReader file={filename} ref={epubRef}/>
   }
-  if (filename?.endsWith('epub')) {
-    reader = <EPUBReader file={searchParams.get("file")!}/>
+
+
+  const enterEyeMode = () => {
+    pdfRef.current?.eyesMode()
+    epubRef.current?.eyesMode()
+  }
+
+  const openCategory = () => {
+    (pdfRef.current || epubRef.current)?.openCategory()
   }
 
   const screenshot = () => {
     ipcRenderer.send("screenshot")
   }
   return <div style={{height: '100%'}}>
-      <Link to={"/"}>back</Link>
-      <Button type="primary" onClick={screenshot}>截屏</Button>
-      <Button type="primary" onClick={() => setShowScreenshot(false)}>清除截屏</Button>
-      <span>{searchParams.get("file")}</span>
+      <ReaderHeader screenshot={screenshot} clearScreenshot={() => setShowScreenshot(false)} file={filename} enterEyeMode={enterEyeMode} openCategory={openCategory}/>
       <Screenshot show={showScreenshot} setShow={setShowScreenshot} screen={screen}/>
-      {reader}
+      {readerTemplate()}
     </div>
 }

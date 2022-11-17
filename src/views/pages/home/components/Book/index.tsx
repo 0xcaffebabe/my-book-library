@@ -15,6 +15,9 @@ export default function Book(props: {book: BookDTO}) {
   // useEffect(() => {
   //   navigate("/reader?file=C:/Users/Lenovo/iCloudDrive/ebook/051_Redis实战.pdf")
   // })
+  // useEffect(() => {
+  //   navigate("/reader?file=C:/Users/Lenovo/iCloudDrive/ebook/elasticsearch实战.epub")
+  // })
   const book = props.book
   return <div className={styles.bookItem} style={{color: '#000'}}>
     <Image
