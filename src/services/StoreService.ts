@@ -2,6 +2,8 @@ import ConfigService from "./ConfigService";
 import fs from 'fs'
 import {DataType} from '../enums/DataType'
 import PathUtils from "utils/PathUtils";
+import path from 'path'
+import Path from "epubjs/types/utils/path";
 
 /**
  *
@@ -45,6 +47,35 @@ export default class StoreService {
       return JSON.parse(defaultVal)
     }
     return JSON.parse((await fs.promises.readFile(path)).toString())
+  }
+
+
+  /**
+   *
+   * 同步本地存储到云
+   * @memberof StoreService
+   */
+  public async syncLocalStorage() {
+    const ignoreKeys: string[] = ['config::url']
+    for(let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i) || ''
+      if (ignoreKeys.some(v => v === key)) {
+        continue;
+      }
+      await this.saveFile(key, localStorage.getItem(key) || '')
+    }
+  }
+
+  public async downloadLocalStoreage() {
+    const baseDir = this.getDataStoreUrl()
+    const files = (await fs.promises.readdir(baseDir)).map(v => PathUtils.normalize(baseDir + "/" + v))
+    for(let file of files) {
+      if (fs.lstatSync(file).isDirectory()) {
+        continue
+      }
+      const data = await fs.promises.readFile(file)
+      localStorage.setItem(file.replaceAll(PathUtils.normalize(baseDir + "/"), ""), data.toString())
+    }
   }
 
   private getDataStoreUrl() {

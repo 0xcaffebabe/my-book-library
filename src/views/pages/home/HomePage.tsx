@@ -1,5 +1,6 @@
 import React from 'react';
-import { Col, Row, Button, Layout, message, Input   } from 'antd';
+import { Col, Row, Button, Layout, message, Input, Dropdown   } from 'antd';
+import type { MenuProps } from 'antd';
 const { Header, Content } = Layout;
 import styles from './HomePage.module.css'
 import BookDTO from '@/dto/BookDTO';
@@ -9,8 +10,29 @@ import BaseUrlSetting from './BaseUrlSetting';
 import Book from './components/Book'
 import IndexGenerator from './components/IndexGenerator';
 
+const items = [
+  {
+    key: '1',
+    label: '上传数据'
+  },
+  {
+    key: '2',
+    label: '下载数据'
+  },
+  {
+    key: '3',
+    label: '重建索引'
+  },
+  {
+    key: '4',
+    label: '存储目录设置'
+  }
+]
+
 export default class HomePage extends React.Component<{}, {bookList: BookDTO[], kw: string, settingVisible: boolean}> {
   private indexService = IndexService.newInstance()
+
+  private storeService = StoreService.newInstance();
 
   private originBookList: BookDTO[] = []
 
@@ -37,14 +59,6 @@ export default class HomePage extends React.Component<{}, {bookList: BookDTO[], 
     this.indexGenerator.current?.display()
   }
 
-  async restore() {
-    const data = (await StoreService.newInstance().getFile('pdfjs.history')) || ''
-    localStorage.setItem('pdfjs.history', data)
-  }
-
-  async setBaseUrl(url: string) {
-  }
-
   handleKwChange(event: React.ChangeEvent<HTMLInputElement>) {
     const kw = event.target.value
     this.setState({kw})
@@ -55,6 +69,27 @@ export default class HomePage extends React.Component<{}, {bookList: BookDTO[], 
     }
   }
 
+  onMenuClick = async (key: string) => {
+    if (key == '1') {
+      await this.storeService.syncLocalStorage()
+      message.info("上传完成")
+    }
+    if (key == '2') {
+      this.downloadLocalStoreage()
+    }
+    if (key == '3') {
+      this.handleReindex()
+    }
+    if (key == '4') {
+      this.setState({settingVisible: true})
+    }
+  };
+
+  async downloadLocalStoreage() {
+    await this.storeService.downloadLocalStoreage()
+    message.info("同步完成")
+  }
+
   render() {
     return <Layout className={styles.layout}>
       <Header className={styles.header}>
@@ -62,14 +97,8 @@ export default class HomePage extends React.Component<{}, {bookList: BookDTO[], 
             <Col span={8}>
               <Input placeholder='搜索' value={this.state.kw} onChange={(e) => this.handleKwChange(e)}></Input>
             </Col>
-            <Col span={4}>
-              <Button type="primary" style={{float: 'right', marginTop: '16px'}} onClick={() => this.handleReindex()}>重建书籍索引</Button>
-            </Col>
-            <Col span={4}>
-              <Button onClick={() => this.setState({settingVisible: true})}> 存储目录设置</Button>
-            </Col>
-            <Col span={4} offset={4}>
-              <Button type="primary" onClick={() => this.restore()}>还原pdf历史记录</Button>
+            <Col span={4} offset={12}>
+              <Dropdown.Button style={{display: 'inline-block'}} type='primary' onClick={() => this.downloadLocalStoreage()} menu={{ items, onClick: (e) => this.onMenuClick(e.key) }}>同步</Dropdown.Button>
             </Col>
           </Row>
           <BaseUrlSetting open={this.state.settingVisible}/>
