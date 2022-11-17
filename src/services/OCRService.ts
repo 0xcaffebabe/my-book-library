@@ -1,6 +1,6 @@
 
-const clientId = 'h4eoCwxHFsFerRvGWtGiMW4D'
-const clientSecret = 'RPSQdIC5fL7y7c0BiCF9GLOeqngbKobG'
+const clientId = process.env.BAIDU_ID
+const clientSecret = process.env.BAIDU_SECRET
 import axios from 'axios'
 
 interface Words {
