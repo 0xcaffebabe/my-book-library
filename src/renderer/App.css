@@ -45,3 +45,17 @@ html ::-webkit-scrollbar-thumb {
   height: 100%;
   width: 100%;
 }
+
+.ocr {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  font-size: 16px;
+  line-height: 20px;
+  color: #ddd;
+  user-select: all;
+}
+
+.ocr::selection {
+  background-color: blue;
+}
