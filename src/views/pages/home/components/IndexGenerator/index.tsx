@@ -1,10 +1,10 @@
 import { Progress, Modal } from "antd";
 import React from "react";
-import IndexService from 'services/IndexService';
+import BookService from 'services/BookService';
 
 export default class IndexGenerator extends React.Component<{}, {show: boolean, progress: number, book: string}> {
 
-  private indexService = IndexService.newInstance()
+  private bookService = BookService.newInstance()
 
   constructor(props: {}) {
     super(props)
@@ -20,7 +20,7 @@ export default class IndexGenerator extends React.Component<{}, {show: boolean, 
   }
 
   indexing() {
-    this.indexService.index((book, index, total) => {
+    this.bookService.index((book, index, total) => {
       this.setState({
         book,
         progress: Math.floor((index / total) * 100)

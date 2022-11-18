@@ -1,6 +1,5 @@
 import BookService from "services/BookService";
 import BookDTO from "@/dto/BookDTO";
-import { Link } from "react-router-dom";
 import styles from './Book.module.css'
 import {Image} from 'antd'
 import {useNavigate} from 'react-router-dom'
@@ -19,15 +18,19 @@ export default function Book(props: {book: BookDTO}) {
   //   navigate("/reader?file=C:/Users/Lenovo/iCloudDrive/ebook/elasticsearch实战.epub")
   // })
   const book = props.book
+  const gotoReader = () => {
+    bookService.addReadingReacord(book.name)
+    navigate("/reader?file=" + bookService.generateBookStoreUrl(book.name))
+  }
   return <div className={styles.bookItem} style={{color: '#000'}}>
     <Image
     width={200}
     height={320}
     preview={false}
     src={'file:///' + bookService.generateBookThumbnailUrl(book.name)}
-    onClick={() => navigate("/reader?file=" + bookService.generateBookStoreUrl(book.name))}
+    onClick={gotoReader}
     fallback={fallback}
   />
-    <Link to={"/reader?file=" + bookService.generateBookStoreUrl(book.name)}>{book.name}</Link>
+    <p>{book.name}</p>
   </div>
 }

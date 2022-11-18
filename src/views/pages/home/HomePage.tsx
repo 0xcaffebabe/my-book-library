@@ -1,14 +1,13 @@
 import React from 'react';
-import { Col, Row, Button, Layout, message, Input, Dropdown   } from 'antd';
-import type { MenuProps } from 'antd';
+import { Col, Row, Segmented, Layout, message, Input, Dropdown   } from 'antd';
 const { Header, Content } = Layout;
 import styles from './HomePage.module.css'
 import BookDTO from '@/dto/BookDTO';
-import IndexService from 'services/IndexService';
 import StoreService from 'services/StoreService';
 import BaseUrlSetting from './BaseUrlSetting';
 import Book from './components/Book'
 import IndexGenerator from './components/IndexGenerator';
+import BookService from 'services/BookService';
 
 const items = [
   {
@@ -30,13 +29,14 @@ const items = [
 ]
 
 export default class HomePage extends React.Component<{}, {bookList: BookDTO[], kw: string, settingVisible: boolean}> {
-  private indexService = IndexService.newInstance()
 
-  private storeService = StoreService.newInstance();
-
-  private originBookList: BookDTO[] = []
+  private storeService = StoreService.newInstance()
+  private bookService = BookService.newInstance()
 
   private indexGenerator: React.RefObject<IndexGenerator>;
+
+  private allBookList: BookDTO[] = []
+  private readingBookList: BookDTO[] = []
 
   constructor(props: {}) {
     super(props)
@@ -49,24 +49,32 @@ export default class HomePage extends React.Component<{}, {bookList: BookDTO[], 
   }
 
   async componentDidMount(){
-      this.originBookList = await this.indexService.getBookIndex()
-      this.setState({
-        bookList: this.originBookList
-      })
+    this.allBookList = await this.bookService.getBookList()
+    this.readingBookList = await this.bookService.getReadingRecord()
+    this.setState({
+      bookList: this.readingBookList
+    })
   }
 
   async handleReindex() {
     this.indexGenerator.current?.display()
   }
 
+  handleSegementChange(key: string | number) {
+    if (key === '全部') {
+      this.setState({
+        bookList: this.allBookList
+      })
+    } else {
+      this.setState({
+        bookList: this.readingBookList
+      })
+    }
+  }
+
   handleKwChange(event: React.ChangeEvent<HTMLInputElement>) {
     const kw = event.target.value
     this.setState({kw})
-    if (!kw) {
-      this.setState({bookList: this.originBookList})
-    }else {
-      this.setState({bookList: this.originBookList.filter(v => v.name.toUpperCase().indexOf(kw.toUpperCase()) != -1)})
-    }
   }
 
   onMenuClick = async (key: string) => {
@@ -104,8 +112,13 @@ export default class HomePage extends React.Component<{}, {bookList: BookDTO[], 
           <BaseUrlSetting open={this.state.settingVisible}/>
       </Header>
       <Content className={styles.bookList}>
+        <Row style={{marginTop: '20px'}}>
+          <Col span={4} offset={20}>
+            <Segmented options={["最近阅读", "全部"]} onChange={(v) => this.handleSegementChange(v)}/>
+          </Col>
+        </Row>
         <Row>
-          {this.state.bookList.map(v =>
+          {this.state.bookList.filter(v => v.name.toUpperCase().indexOf(this.state.kw.toUpperCase()) != -1).map(v =>
           <Col xs={12} sm={12} md={8} lg={6} xl={6} key={v.name}>
             <Book book={v}/>
           </Col>)}

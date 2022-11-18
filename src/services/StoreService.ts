@@ -23,10 +23,11 @@ export default class StoreService {
     return this.instance || (this.instance = new StoreService())
   }
 
-  public async saveData(type: DataType, data: string) {
+  public async saveData(type: DataType, data: any) {
     const path = `${this.getDataStoreUrl()}/${type}`
     PathUtils.ensureDirectoryExistence(path)
-    fs.promises.writeFile(path, data)
+    localStorage.setItem(type, JSON.stringify(data))
+    fs.promises.writeFile(path, JSON.stringify(data))
   }
 
   public async saveFile(filename: string, data: string) {
