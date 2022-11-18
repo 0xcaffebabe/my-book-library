@@ -6,12 +6,12 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  example_matrix:
     strategy:
       matrix:
-        node-version: 16.x
+        node-version: [16.x]
         os: [macos-12, windows-2022]
-
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
@@ -24,4 +24,6 @@ jobs:
     - name: 'upload artifact'
       uses: actions/upload-artifact@v3.1.1
       with:
-        path: ./release/build/*.dmg
+        path: |
+          ./release/build/*.dmg
+          ./release/build/*.exe
