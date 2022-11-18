@@ -149,7 +149,7 @@ export default class BookService {
       // package env
       appPath += '/resources'
     }
-    let cmd = `java  -classpath ${appPath}/native/aspose-words-15.8.0-jdk16.jar;${appPath}/native/aspose-pdf-22.6.0.jar ${appPath}/native/PDFUtils.java ${file} ${thumbnailPath}`
+    let cmd = `java  -classpath "${appPath}/native/aspose-words-15.8.0-jdk16.jar;${appPath}/native/aspose-pdf-22.6.0.jar" "${appPath}/native/PDFUtils.java" "${file}" "${thumbnailPath}"`
     console.log(cmd)
     const {stdout, sterr} = await exec(cmd)
     console.log(stdout)
