@@ -21,9 +21,13 @@ jobs:
         cache: 'npm'
     - run: npm install
     - run: npm run package
-    - name: 'upload artifact'
+    - name: 'upload macos artifact'
       uses: actions/upload-artifact@v3.1.1
       with:
-        path: |
-          ./release/build/*.dmg
-          ./release/build/*.exe
+        name: macos
+        path: ./release/build/*.dmg
+    - name: 'upload windows artifact'
+      uses: actions/upload-artifact@v3.1.1
+      with:
+        name: windows
+        path: ./release/build/*.exe
