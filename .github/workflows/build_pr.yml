@@ -1,12 +1,13 @@
 
-name: build
+name: build_pr
 
 on:
-  push:
+  pull_request:
     branches: [ "main" ]
 
+
 jobs:
-  build:
+  build_pr:
     strategy:
       matrix:
         node-version: [16.x]
