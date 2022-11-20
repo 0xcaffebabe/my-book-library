@@ -143,8 +143,8 @@ export default class BookService {
    */
   private async generatePDFThumbnail(file: string, thumbnailPath: string) {
 
-    let appPath = PathUtils.normalize(process.cwd())
 
+    let appPath = PathUtils.normalize(process.cwd())
     if (process.env.NODE_ENV === 'production') {
       // package env
       appPath += '/resources'

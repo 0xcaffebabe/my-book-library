@@ -3,6 +3,7 @@ import fs from 'fs'
 import {Button, message} from 'antd'
 import StoreService from "services/StoreService";
 import Reader from "./Reader";
+import PathUtils from "utils/PathUtils";
 
 export default class PDFReader extends React.Component<{file: string},{}>  implements Reader{
 
@@ -41,9 +42,17 @@ export default class PDFReader extends React.Component<{file: string},{}>  imple
     message.info('成功')
   }
 
+  getViewerUrl() {
+    if (process.env.NODE_ENV !== 'production') {
+      // dev env
+      return '/pdf/web/viewer.html'
+    }
+    return `file:///${PathUtils.normalize(process.cwd() + '/resources/public/pdf/web/viewer.html')}`
+  }
+
   render() {
     return  <div style={{height: 'calc(100% - 24px)', overflowY: 'hidden'}}>
-      <iframe src="/pdf/web/viewer.html" style={{height: '100%', width: '100%'}}></iframe>
+      <iframe src={this.getViewerUrl()} style={{height: '100%', width: '100%'}}></iframe>
     </div>
   }
 }

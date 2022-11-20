@@ -163,7 +163,7 @@
   "build": {
     "productName": "MyBookLibrary",
     "appId": "wang.ismy.BookLibrary",
-    "asar": true,
+    "asar": false,
     "asarUnpack": "**\\*.{node,dll}",
     "files": [
       "dist",
@@ -217,7 +217,8 @@
     },
     "extraResources": [
       "./assets/**",
-      "./native/**"
+      "./native/**",
+      "./public/**"
     ],
     "publish": {
       "provider": "github",
