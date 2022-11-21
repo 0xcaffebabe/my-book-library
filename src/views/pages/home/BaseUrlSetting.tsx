@@ -1,6 +1,6 @@
+import StoreService from "services/StoreService"
 import { Modal,Input, message } from "antd"
 import React from "react"
-import ConfigService from "../../../services/ConfigService"
 
 
 export default class BaseUrlSetting extends React.Component<{open: boolean},{url: string}> {
@@ -14,7 +14,7 @@ export default class BaseUrlSetting extends React.Component<{open: boolean},{url
   }
 
   handleOk() {
-    ConfigService.newInstance().saveBaseStoreUrl(this.state.url)
+    StoreService.newInstance().saveBaseStoreUrl(this.state.url)
     message.info("成功")
   }
 

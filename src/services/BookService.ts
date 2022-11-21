@@ -3,7 +3,6 @@ import BookDTO from '@/dto/BookDTO'
 import fs, { readlink } from 'fs'
 import StoreService from 'services/StoreService'
 import { DataType } from 'enums/DataType'
-import ConfigService from './ConfigService'
 
 import util from 'util';
 import PathUtils from 'utils/PathUtils'
@@ -30,7 +29,6 @@ export default class BookService {
   }
 
   private storeService = StoreService.newInstance()
-  private configService = ConfigService.newInstance()
 
   /**
    *
@@ -38,7 +36,7 @@ export default class BookService {
    * @memberof IndexService
    */
    public async index(callback?: (currentBook: string, currentIndex: number, total: number) => void) {
-    const storeLoc = this.configService.getBaseStoreUrl()
+    const storeLoc = this.storeService.getBaseStoreUrl()
     const bookList = (await fs.promises.readdir(storeLoc))
       .filter(v => v.toUpperCase().indexOf("PDF") != -1 || v.toUpperCase().indexOf("EPUB") != -1)
       .map(v => {
@@ -105,11 +103,11 @@ export default class BookService {
     const arr = bookName.split("/")
     const pdfFilename = arr[arr.length - 1]
     const thumbnailFilename = pdfFilename.replace('.pdf', '.jpg').replace(".epub", ".jpg")
-    return `${this.configService.getBaseStoreUrl().replaceAll("\\", "/")}/data/thumbnails/${thumbnailFilename}`
+    return `${this.storeService.getBaseStoreUrl().replaceAll("\\", "/")}/data/thumbnails/${thumbnailFilename}`
   }
 
   public generateBookStoreUrl(bookName: string) {
-    return this.configService.getBaseStoreUrl() + '/' + bookName;
+    return this.storeService.getBaseStoreUrl() + '/' + bookName;
   }
 
   public async generateThumbnail(file: string) {
@@ -149,7 +147,8 @@ export default class BookService {
       // package env
       appPath += '/resources'
     }
-    let cmd = `java  -classpath "${appPath}/native/aspose-words-15.8.0-jdk16.jar;${appPath}/native/aspose-pdf-22.6.0.jar" "${appPath}/native/PDFUtils.java" "${file}" "${thumbnailPath}"`
+    const classPath = PathUtils.normalize(this.storeService.getBaseStoreUrl() + "/data/bin")
+    let cmd = `java  -classpath "${classPath}/aspose-words.jar;${classPath}/aspose-pdf.jar" "${appPath}/native/PDFUtils.java" "${file}" "${thumbnailPath}"`
     console.log(cmd)
     const {stdout, sterr} = await exec(cmd)
     console.log(stdout)

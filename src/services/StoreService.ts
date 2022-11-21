@@ -1,9 +1,7 @@
-import ConfigService from "./ConfigService";
 import fs from 'fs'
 import {DataType} from '../enums/DataType'
 import PathUtils from "utils/PathUtils";
-import path from 'path'
-import Path from "epubjs/types/utils/path";
+import os from 'os'
 
 /**
  *
@@ -14,8 +12,6 @@ import Path from "epubjs/types/utils/path";
 export default class StoreService {
 
   private static instance: StoreService;
-
-  private configService: ConfigService = ConfigService.newInstance()
 
   private constructor(){}
 
@@ -79,7 +75,39 @@ export default class StoreService {
     }
   }
 
+  /**
+   *
+   * 获取基本存储目录
+   * @memberof ConfigService
+   */
+   public getBaseStoreUrl(): string {
+    const localStorage = this.getLocalStorage()
+    const url = localStorage && localStorage.getItem("config::url")
+    if (url) {
+      return url
+    }
+    const isWin = os.platform().indexOf("win32") != -1
+    const isMac = os.platform().indexOf("darwin") != -1
+    if (isWin) {
+      return 'C:/Users/chenj/iCloudDrive/ebook'
+    }
+    if (isMac) {
+      return '/Users/chenjiping/Library/Mobile Documents/com~apple~CloudDocs/ebook'
+    }
+    throw new Error("无法获取基本存储目录")
+  }
+
+  public saveBaseStoreUrl(url: string){
+    localStorage.setItem("config::url", url)
+  }
+
+  private getLocalStorage(): Storage | undefined {
+    if (typeof localStorage !== 'undefined') {
+      return localStorage
+    }
+  }
+
   private getDataStoreUrl() {
-    return this.configService.getBaseStoreUrl() + '/data'
+    return this.getBaseStoreUrl() + '/data'
   }
 }
