@@ -29,7 +29,7 @@ export default class SystemSerivce {
       const arr = exePath.split("/")
       arr.pop()
       basePath = arr.join("/")
-      if (os.platform().indexOf("drawin") != -1) {
+      if (os.platform().indexOf("darwin") != -1) {
         arr.pop()
         basePath += "/Resources"
       } {
