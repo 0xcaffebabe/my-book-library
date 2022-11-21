@@ -4,6 +4,7 @@ import {Button, message} from 'antd'
 import StoreService from "services/StoreService";
 import Reader from "./Reader";
 import SystemSerivce from "services/SystemService";
+import OSUtils from "utils/OSUtils";
 
 export default class PDFReader extends React.Component<{file: string},{}>  implements Reader{
 
@@ -49,7 +50,11 @@ export default class PDFReader extends React.Component<{file: string},{}>  imple
       // dev env
       return '/pdf/web/viewer.html'
     }
-    return `file:///${this.systemService.getResourcePath()}/public/pdf/web/viewer.html`
+    if (OSUtils.isMac()) {
+      return `file://${this.systemService.getResourcePath()}/public/pdf/web/viewer.html`
+    } else {
+      return `file:///${this.systemService.getResourcePath()}/public/pdf/web/viewer.html`
+    }
   }
 
   render() {

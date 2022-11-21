@@ -28,11 +28,12 @@ export default class SystemSerivce {
       // 获取可执行文件的父目录
       const arr = exePath.split("/")
       arr.pop()
-      basePath = arr.join("/")
       if (os.platform().indexOf("darwin") != -1) {
         arr.pop()
+        basePath = arr.join("/")
         basePath += "/Resources"
-      } {
+      } else {
+        basePath = arr.join("/")
         basePath += "/resources"
       }
     } else {
