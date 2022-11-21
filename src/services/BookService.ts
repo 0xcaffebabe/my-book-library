@@ -7,6 +7,7 @@ import { DataType } from 'enums/DataType'
 import util from 'util';
 import PathUtils from 'utils/PathUtils'
 import StreamZip from 'node-stream-zip'
+import SystemSerivce from './SystemService';
 
 
 const exec = util.promisify(require('child_process').exec);
@@ -29,6 +30,7 @@ export default class BookService {
   }
 
   private storeService = StoreService.newInstance()
+  private systemService = SystemSerivce.newInstance()
 
   /**
    *
@@ -141,14 +143,9 @@ export default class BookService {
    */
   private async generatePDFThumbnail(file: string, thumbnailPath: string) {
 
-
-    let appPath = PathUtils.normalize(process.cwd())
-    if (process.env.NODE_ENV === 'production') {
-      // package env
-      appPath += '/resources'
-    }
+    let nativePath = this.systemService.getResourcePath("native")
     const classPath = PathUtils.normalize(this.storeService.getBaseStoreUrl() + "/data/bin")
-    let cmd = `java  -classpath "${classPath}/aspose-words.jar;${classPath}/aspose-pdf.jar" "${appPath}/native/PDFUtils.java" "${file}" "${thumbnailPath}"`
+    let cmd = `java  -classpath "${classPath}/aspose-words.jar;${classPath}/aspose-pdf.jar" "${nativePath}/PDFUtils.java" "${file}" "${thumbnailPath}"`
     console.log(cmd)
     const {stdout, sterr} = await exec(cmd)
     console.log(stdout)

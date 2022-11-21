@@ -3,9 +3,11 @@ import fs from 'fs'
 import {Button, message} from 'antd'
 import StoreService from "services/StoreService";
 import Reader from "./Reader";
-import PathUtils from "utils/PathUtils";
+import SystemSerivce from "services/SystemService";
 
 export default class PDFReader extends React.Component<{file: string},{}>  implements Reader{
+
+  private systemService = SystemSerivce.newInstance()
 
   constructor(props: {file: string}) {
     super(props)
@@ -47,7 +49,7 @@ export default class PDFReader extends React.Component<{file: string},{}>  imple
       // dev env
       return '/pdf/web/viewer.html'
     }
-    return `file:///${PathUtils.normalize(process.cwd() + '/resources/public/pdf/web/viewer.html')}`
+    return `file:///${this.systemService.getResourcePath()}/public/pdf/web/viewer.html`
   }
 
   render() {
