@@ -4,6 +4,7 @@ import {
   shell,
   BrowserWindow,
   MenuItemConstructorOptions,
+  ipcMain,
 } from 'electron';
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
@@ -126,6 +127,13 @@ export default class MenuBuilder {
         },
       ],
     };
+    const subMenuOpt: MenuItemConstructorOptions = {
+      label: '截图',
+      accelerator: 'Command+S',
+      click: () => {
+        console.log('jietu ')
+      }
+    }
     const subMenuViewProd: MenuItemConstructorOptions = {
       label: 'View',
       submenu: [
@@ -189,7 +197,7 @@ export default class MenuBuilder {
         ? subMenuViewDev
         : subMenuViewProd;
 
-    return [subMenuAbout, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
+    return [subMenuAbout, subMenuOpt, subMenuEdit, subMenuView, subMenuWindow, subMenuHelp];
   }
 
   buildDefaultTemplate() {
@@ -209,6 +217,13 @@ export default class MenuBuilder {
             },
           },
         ],
+      },
+      {
+        label: '&截图',
+        accelerator: 'Ctrl+S',
+        click: () => {
+          BrowserWindow.getAllWindows()[0].webContents.send("screenshot-action")
+        }
       },
       {
         label: '&View',

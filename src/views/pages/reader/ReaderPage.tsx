@@ -11,10 +11,11 @@ export default function ReaderPage() {
   const [showScreenshot, setShowScreenshot] = useState(false)
   const [screen, setScreen] = useState('')
 
-  ipcRenderer.on('screenshot', (event, image) => {
-    setScreen(image)
-    setShowScreenshot(true)
-  });
+  ipcRenderer.removeAllListeners('screenshot-action')
+
+  ipcRenderer.on('screenshot-action', () => {
+    screenshot()
+  })
 
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -39,7 +40,9 @@ export default function ReaderPage() {
   }
 
   const screenshot = () => {
-    ipcRenderer.send("screenshot")
+    const img = ipcRenderer.sendSync("screenshot")
+    setScreen(img)
+    setShowScreenshot(true)
   }
   return <div style={{height: '100%'}}>
       <ReaderHeader screenshot={screenshot} clearScreenshot={() => setShowScreenshot(false)} file={filename} enterEyeMode={enterEyeMode} openCategory={openCategory}/>
