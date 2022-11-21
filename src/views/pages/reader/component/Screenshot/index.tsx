@@ -1,10 +1,12 @@
 import styles from './Screenshot.module.css'
 import {Modal} from 'antd'
-import { useState,useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import Cropperjs from 'cropperjs'
 import 'cropperjs/dist/cropper.css'
 import {Button} from 'antd'
 import OCRService from 'services/OCRService'
+import { saveAs } from 'file-saver';
+import TimeUtils from 'utils/TimeUtils'
 
 const ocrService = OCRService.newInstance()
 
@@ -45,10 +47,19 @@ export default function Screenshot(props: {screen: string,show: boolean, setShow
     cropper.current?.setDragMode("crop")
     fillOcrResult('')
   }
+
+  const save = () => {
+    const img = cropper.current?.getCroppedCanvas({
+      maxHeight: 4096,
+      maxWidth: 4096,
+    }).toDataURL()!
+    saveAs(img, `${TimeUtils.formatTime(new Date())}.png`)
+  }
   return (
-    <Modal title="截图" open={props.show} onOk={() => props.setShow(false)} onCancel={() => props.setShow(false)} width="90%">
+    <Modal title="截图" style={{top: '4px'}} open={props.show} onOk={() => props.setShow(false)} onCancel={() => props.setShow(false)} width="100%">
       <div className={styles.screenshot}>
         <Button type="primary" onClick={ocr}>识别</Button>
+        <Button type="primary" onClick={save}>保存</Button>
         <Button type="primary" onClick={reset}>重置</Button>
         <div>
           <img id="screenImg" src={props.screen} style={{width: '100%', height: '100%'}}/>
