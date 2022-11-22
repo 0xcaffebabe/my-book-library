@@ -102,6 +102,18 @@ export default class MenuBuilder {
         ]
 
       },
+      {
+        label: '&开发',
+        submenu: [
+          {
+            label: '&开发者工具',
+            accelerator: 'Command+Shift+I',
+            click: () => {
+              BrowserWindow.getAllWindows()[0].webContents.toggleDevTools();
+            }
+          }
+        ]
+      }
     ];
 
     return templateDefault;
@@ -154,6 +166,18 @@ export default class MenuBuilder {
           },
         ]
       },
+      {
+        label: '&开发',
+        submenu: [
+          {
+            label: '&开发者工具',
+            accelerator: 'Ctrl+Shift+I',
+            click: () => {
+              BrowserWindow.getAllWindows()[0].webContents.toggleDevTools();
+            }
+          }
+        ]
+      }
     ];
 
     return templateDefault;

@@ -78,10 +78,6 @@ const createWindow = async () => {
   });
   mainWindow.maximize()
 
-  const ret = globalShortcut.register('CommandOrControl+Shift+I', () => {
-    mainWindow!.webContents.toggleDevTools();
-  });
-
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
   mainWindow.on('ready-to-show', () => {
