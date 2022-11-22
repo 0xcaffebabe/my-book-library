@@ -35,8 +35,8 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         repository: 0xcaffebabe/my-book-library
-        name: '1.0'
-        tag_name: '1.0'
+        name: ${{ github.event.repository.updated_at}}
+        tag_name: ${{ github.event.repository.updated_at}}
         files: |
           ./release/build/*.dmg
           ./release/build/*.exe
