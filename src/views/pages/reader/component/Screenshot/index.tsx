@@ -14,6 +14,7 @@ export default function Screenshot(props: {screen: string,show: boolean, setShow
   const cropper = useRef<Cropperjs>()
   useEffect(() => {
     if (props.show) {
+      cropper.current?.destroy()
       cropper.current = new Cropperjs(document.getElementById('screenImg') as HTMLImageElement, {
         ready: () => {
           cropper.current?.clear()
@@ -55,16 +56,23 @@ export default function Screenshot(props: {screen: string,show: boolean, setShow
     }).toDataURL()!
     saveAs(img, `${TimeUtils.formatTime(new Date())}.png`)
   }
+
+  const exit = () => {
+    props.setShow(false)
+  }
   return (
-    <Modal title="截图" style={{top: '4px'}} open={props.show} onOk={() => props.setShow(false)} onCancel={() => props.setShow(false)} width="100%">
+    <div title="截图" style={{top: '4px', display: props.show? 'block': 'none', position: 'fixed', background: '#ccc'}}>
       <div className={styles.screenshot}>
-        <Button type="primary" onClick={ocr}>识别</Button>
-        <Button type="primary" onClick={save}>保存</Button>
-        <Button type="primary" onClick={reset}>重置</Button>
+        <div className={styles.opt}>
+          <Button type="primary" onClick={ocr}>识别</Button>
+          <Button type="primary" onClick={save}>保存</Button>
+          <Button type="primary" onClick={reset}>重置</Button>
+          <Button type="primary" onClick={exit}>退出</Button>
+        </div>
         <div>
           <img id="screenImg" src={props.screen} style={{width: '100%', height: '100%'}}/>
         </div>
       </div>
-    </Modal>
+    </div>
   )
 }
