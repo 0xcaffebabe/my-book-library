@@ -32,11 +32,9 @@ jobs:
         name: windows
         path: ./release/build/*.exe
     - name: Release
-      uses: softprops/action-gh-release@v1
+      uses: ncipollo/release-action@v1
       with:
-        repository: 0xcaffebabe/my-book-library
-        name: ${{ github.event.repository.updated_at}}
-        tag_name: ${{ github.event.repository.updated_at}}
-        files: |
-          ./release/build/*.dmg
-          ./release/build/*.exe
+        name: '1.0'
+        tag: '1.0'
+        allowUpdates: true
+        artifacts: "./release/build/*.exe,./release/build/*.dmg"
