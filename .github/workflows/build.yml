@@ -31,3 +31,9 @@ jobs:
       with:
         name: windows
         path: ./release/build/*.exe
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          ./release/build/*.dmg
+          ./release/build/*.exe
