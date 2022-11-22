@@ -76,6 +76,7 @@ const createWindow = async () => {
       webSecurity: false
     },
   });
+  mainWindow.maximize()
 
   const ret = globalShortcut.register('CommandOrControl+Shift+I', () => {
     mainWindow!.webContents.toggleDevTools();
