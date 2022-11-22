@@ -1,5 +1,5 @@
 import React, {useRef, useState} from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 import PDFReader from "./PDFReader";
 import EPUBReader from './EPUBReader'
@@ -10,11 +10,27 @@ const {ipcRenderer} = require('electron')
 export default function ReaderPage() {
   const [showScreenshot, setShowScreenshot] = useState(false)
   const [screen, setScreen] = useState('')
+  const navigate = useNavigate()
 
   ipcRenderer.removeAllListeners('screenshot-action')
+  ipcRenderer.removeAllListeners('back-action')
+  ipcRenderer.removeAllListeners('eyes-mode-action')
+  ipcRenderer.removeAllListeners('category-action')
 
   ipcRenderer.on('screenshot-action', () => {
     screenshot()
+  })
+
+  ipcRenderer.on('back-action', () => {
+    navigate("/")
+  })
+
+  ipcRenderer.on('eyes-mode-action', () => {
+    enterEyeMode()
+  })
+
+  ipcRenderer.on('category-action', () => {
+    openCategory()
   })
 
 
@@ -45,7 +61,7 @@ export default function ReaderPage() {
     setShowScreenshot(true)
   }
   return <div style={{height: '100%'}}>
-      <ReaderHeader screenshot={screenshot} clearScreenshot={() => setShowScreenshot(false)} file={filename} enterEyeMode={enterEyeMode} openCategory={openCategory}/>
+      {/* <ReaderHeader screenshot={screenshot} clearScreenshot={() => setShowScreenshot(false)} file={filename} enterEyeMode={enterEyeMode} openCategory={openCategory}/> */}
       <Screenshot show={showScreenshot} setShow={setShowScreenshot} screen={screen}/>
       {readerTemplate()}
     </div>

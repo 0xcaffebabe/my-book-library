@@ -99,7 +99,7 @@ export default class EPUBReader extends React.Component<{file: string},{cateList
     if (point) {
       await this.book.renderTo('epubBook', {
         width: window.innerWidth,
-				height: window.innerHeight- 100,
+				height: window.innerHeight,
       }).display(point)
     }else {
       await this.book.renderTo('epubBook').display()
@@ -107,13 +107,11 @@ export default class EPUBReader extends React.Component<{file: string},{cateList
     this.setState({cateList: nav2Cate(this.book.navigation.toc)})
     this.registerTheme()
     document.addEventListener('keydown', this.onKeydown)
-    document.addEventListener('wheel', this.onWheel)
     this.book.rendition.on('keydown', this.onKeydown)
   }
 
   componentWillUnmount(): void {
     document.removeEventListener('keydown', this.onKeydown)
-    document.removeEventListener('wheel', this.onWheel)
   }
 
   async next() {

@@ -61,7 +61,7 @@ export default function Screenshot(props: {screen: string,show: boolean, setShow
     props.setShow(false)
   }
   return (
-    <div title="截图" style={{top: '4px', display: props.show? 'block': 'none', position: 'fixed', background: '#ccc'}}>
+    <div style={{top: '4px', display: props.show? 'block': 'none', position: 'fixed', background: '#ccc', zIndex: '999'}}>
       <div className={styles.screenshot}>
         <div className={styles.opt}>
           <Button type="primary" onClick={ocr}>识别</Button>
