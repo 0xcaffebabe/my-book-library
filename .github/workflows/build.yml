@@ -22,12 +22,12 @@ jobs:
     - run: npm install
     - run: npm run package
     - name: 'upload macos artifact'
-      uses: actions/upload-artifact@v3.1.1
+      uses: actions/upload-artifact@v3.1.3
       with:
         name: macos
         path: ./release/build/*.dmg
     - name: 'upload windows artifact'
-      uses: actions/upload-artifact@v3.1.1
+      uses: actions/upload-artifact@v3.1.3
       with:
         name: windows
         path: ./release/build/*.exe
